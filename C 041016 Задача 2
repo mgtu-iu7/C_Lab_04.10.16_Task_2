@@ -1,0 +1,87 @@
+#include <iostream>
+#include <conio.h>
+#include <stdio.h>
+#include <math.h>
+
+typedef unsigned long long int SLI;
+
+SLI MuchInMe(SLI);
+SLI GiveMeLeft(SLI, int);
+SLI GiveMeRight(SLI, int);
+SLI GiveMeMirror(SLI);
+SLI GiveMeNumber(SLI,int,int);
+
+int main(int argc, char** argv)
+{
+	setlocale(LC_ALL,"RUS");
+	SLI iA, iB;
+
+/*	SLI iA=12438066552345; // Для наглядности как работают функции.
+	printf("\n %lu %llu",sizeof(SLI),iA);	
+	printf("\n %s %llu %llu","Число ",iA,MuchInMe(iA)); // возвращает количество чисел в числе р
+	printf("\n %s %llu %llu","Число ",iA,GiveMeLeft(iA,3)); // возвращает число в кол-ве указанных чисел слева в числе р
+	printf("\n %s %llu %llu","Число ",iA,GiveMeRight(iA,3)); // возвращает число в кол-ве указанных чисел справа в числе р
+	printf("\n %s %llu %llu","Число ",iA,GiveMeMirror(GiveMeRight(iA,3))); // возвращает зеркальное число
+	printf("\n %s %llu %llu","Число ",iA,GiveMeNumber(iA,5,8)); // возвращает число после n-го элемента (слева) в количестве m чисел в числе р
+*/	
+	printf("\n %s","Задайте на числовой оси отрезок [А,В] (натуральные числа от 10 до 4294967295)");
+	scanf("%llu %llu",&iA,&iB);
+	bool bPrint(true),bPrintP(false);
+	for (SLI i=iA;i<=iB;i++)
+	{
+		int sliHalfNumber=int(MuchInMe(i)/2);
+		if (GiveMeLeft(i,sliHalfNumber)==GiveMeMirror(GiveMeRight(i,sliHalfNumber)))
+		//Путей решений много, как один из вариантов.
+		if (bPrint)
+			{
+			printf("\n %s %llu %s %llu %s","Следующие числа являются палиндромами на отрезке [",iA,",",iB,"]:");
+			bPrint=false;
+			bPrintP=true;
+			}
+			else
+			printf("%llu %s",i,";");
+	}
+	if (!bPrintP)
+	printf("\n %s %llu %s %llu %s","На отрезке [",iA,",",iB,"] чисел палиндром нет.");	
+	
+	_getch();
+	return 0;	
+}
+
+SLI MuchInMe(SLI dNumber)
+{
+	SLI sliNumbers(0);
+	while(SLI(dNumber))
+	{
+		dNumber/=10;
+		sliNumbers++;
+	}
+	return sliNumbers;
+}
+SLI GiveMeLeft(SLI dNumber,int iCount)
+{
+	return SLI(dNumber/(pow(10,(MuchInMe(dNumber)-iCount))));
+}
+SLI GiveMeRight(SLI dNumber, int iCount)
+{
+	return	SLI(dNumber-GiveMeLeft(dNumber,MuchInMe(dNumber)-iCount)*pow(10,iCount));
+}
+SLI GiveMeMirror(SLI dNumber)
+{
+	SLI sliNumbers(0), sliCount;
+	sliCount=MuchInMe(dNumber);
+	for (int i=1;i<=sliCount;i++)
+	{
+	sliNumbers+=GiveMeLeft(dNumber,1)*pow(10,i-1);
+	dNumber-=GiveMeLeft(dNumber,1)*pow(10,MuchInMe(dNumber)-1);
+	}
+	return sliNumbers;
+}
+SLI GiveMeNumber(SLI dNumber,int iCount1,int iCount2)
+{
+	SLI sliNumbers(0), sliCount;
+	sliCount=MuchInMe(dNumber);
+	dNumber-=GiveMeLeft(dNumber,iCount1)*pow(10,MuchInMe(dNumber)-iCount1);
+	dNumber/=pow(10,sliCount-iCount1-iCount2);
+	return SLI(dNumber);	
+}
